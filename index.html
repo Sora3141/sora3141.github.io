@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0c10">
+<meta name="robots" content="noindex">
+<title>T.OF... は引っ越しました</title>
+<style>
+  html, body { background: #0b0c10; color: #e8eaf0; }
+  body { margin: 0; min-height: 100dvh; display: grid; place-items: center; text-align: center;
+         font: 16px/1.8 system-ui, -apple-system, sans-serif;
+         padding: max(24px, env(safe-area-inset-top)) 24px max(24px, env(safe-area-inset-bottom)); }
+  a { color: #8ab4ff; }
+  .note { color: #9aa0ad; font-size: 14px; }
+</style>
+</head>
+<body>
+<main>
+  <p>T.OF... は新しいアドレスに移りました。</p>
+  <p><a id="go" href="https://t-of.github.io/">https://t-of.github.io/</a></p>
+  <p class="note">ホーム画面に入れている人は、一度削除して入れ直してください。</p>
+</main>
+<script>
+(function () {
+  var base = 'https://t-of.github.io' + location.pathname + location.search;
+  var h = location.hash.slice(1);
+  document.getElementById('go').href = base + (h ? '#' + h : '');
+
+  // 同じオリジンに全アプリの記録があるので、まとめて新しいアドレスへ渡す。
+  // URL には長さの限界があるので、小さい鍵から詰めて 60000 文字で打ち切る（記録は小さい鍵）。
+  var d = {}, n = 0;
+  try {
+    var ks = [];
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i);
+      ks.push([k, localStorage.getItem(k)]);
+    }
+    ks.sort(function (a, b) { return a[1].length - b[1].length; });
+    for (var j = 0; j < ks.length; j++) {
+      n += ks[j][0].length + ks[j][1].length + 8;
+      if (n > 60000) break;
+      d[ks[j][0]] = ks[j][1];
+    }
+  } catch (e) { /* プライベートモードなど */ }
+
+  location.replace(base + '#tof-move=' + encodeURIComponent(JSON.stringify(d)) + (h ? '&' + h : ''));
+})();
+</script>
+</body>
+</html>
